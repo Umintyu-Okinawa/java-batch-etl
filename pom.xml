@@ -30,6 +30,24 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+  <!-- Spring Boot 基本 -->
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter</artifactId>
+  </dependency>
+
+  <!-- Batch -->
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-batch</artifactId>
+  </dependency>
+
+  <!-- JDBC（Hikari, DataSource など）-->
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-jdbc</artifactId>
+  </dependency>
+
   <!-- MyBatis -->
   <dependency>
     <groupId>org.mybatis.spring.boot</groupId>
@@ -37,17 +55,11 @@
     <version>3.0.3</version>
   </dependency>
 
-  <!-- MySQL JDBC ドライバ -->
+  <!-- MariaDB -->
   <dependency>
-    <groupId>com.mysql</groupId>
-    <artifactId>mysql-connector-j</artifactId>
-    <scope>runtime</scope>
-  </dependency>
-
-  <!-- Web -->
-  <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
+    <groupId>org.mariadb.jdbc</groupId>
+    <artifactId>mariadb-java-client</artifactId>
+    <version>3.4.1</version>
   </dependency>
 
   <!-- テスト -->
@@ -56,14 +68,13 @@
     <artifactId>spring-boot-starter-test</artifactId>
     <scope>test</scope>
   </dependency>
-
-  <!-- テスト時だけ H2 を使う（任意だが実務的） -->
   <dependency>
     <groupId>com.h2database</groupId>
     <artifactId>h2</artifactId>
     <scope>test</scope>
   </dependency>
 </dependencies>
+
 
 
 

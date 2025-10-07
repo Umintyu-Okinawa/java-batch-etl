@@ -6,12 +6,17 @@
 <mapper namespace="com.example.batch.mapper.CustomerMapper">
 
   <select id="findAll" resultType="com.example.batch.domain.Customer">
-    SELECT id, name, country FROM customers
+    SELECT id, name, country
+    FROM customers
+    ORDER BY id
   </select>
 
-  <insert id="insert" parameterType="com.example.batch.domain.Customer">
+  <insert id="insert"
+          parameterType="com.example.batch.domain.Customer"
+          useGeneratedKeys="true"
+          keyProperty="id">
     INSERT INTO customers(name, country)
-    VALUES(#{name}, #{country})
+    VALUES (#{name}, #{country})
   </insert>
 
 </mapper>

@@ -1,15 +1,20 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mariadb://127.0.0.1:3306/batchdb?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: ""
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  main:
+    web-application-type: none
+
+  batch:
+    jdbc:
+      initialize-schema: never # Spring BatchのDDLは流さない（既に作成済み）
+
   sql:
     init:
-      mode: never
-
-mybatis:
-  mapper-locations: classpath*:mapper/*.xml
-  type-aliases-package: com.example.batch.domain
-  configuration:
-    map-underscore-to-camel-case: true
+      mode: always
+      schema-locations: classpath:schema.sql # Batchのschema-mariadb.sqlは外す
+      encoding: UTF-8
+      continue-on-error: true # 既存でも止めない
