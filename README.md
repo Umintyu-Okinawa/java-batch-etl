@@ -153,10 +153,13 @@ docker compose up -d	Dockerで起動（任意）
 ```
 
 ## トラブルシューティング
-CannotGetJdbcConnectionException	DBが起動していない。XAMPPのMySQLをStart。
-Access denied for user 'root'@'localhost'	application.yml のユーザー・パスワードを再確認。
-CSVが読み込まれない	src/main/resources/input/ にファイルを配置。列数と文字コード（UTF-8）を確認。
-出力CSVが空	DB内のレコードが存在しない可能性。SELECTで確認。
+| エラー内容                                         | 原因                                      | 対処方法                                                             |
+| --------------------------------------------- | --------------------------------------- | ---------------------------------------------------------------- |
+| **CannotGetJdbcConnectionException**          | DBに接続できない（MySQLが起動していない）                | XAMPPを起動し、**MySQLを「Start」** にする。                                 |
+| **Access denied for user 'root'@'localhost'** | `application.yml` のユーザー名またはパスワードが間違っている | `spring.datasource.username` と `password` の設定を再確認。               |
+| **CSVが読み込まれない**                               | ファイルの場所・列数・文字コードが不一致                    | `src/main/resources/input/` に正しいCSVを配置し、**列数と文字コード(UTF-8)** を確認。 |
+| **出力CSVが空になる**                                | DBにデータが存在しない                            | `SELECT * FROM customers;` を実行して、データが入っているか確認。                   |
+
 
 <p align="right">(<a href="#top">トップへ戻る</a>)</p>
 
@@ -167,3 +170,4 @@ CSVが読み込まれない	src/main/resources/input/ にファイルを配置�
 GitHub	https://github.com/Umintyu-Okinawa
 
 実務でよく使用されるバッチ処理を学習して実践。
+
