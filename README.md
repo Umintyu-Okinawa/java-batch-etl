@@ -28,8 +28,7 @@
 CSV ⇄ MariaDB 間のデータ連携（ETL）を自動化するバッチアプリケーションです。  
 Spring Batch と MyBatis を組み合わせ、実務レベルのデータ処理・エラーハンドリング・ログ記録を再現しています。  
 
-XAMPP + phpMyAdmin 環境でも再現可能で、Docker でも同様に動作します。  
-学習・転職用のポートフォリオとして作成しました。
+XAMPP + phpMyAdmin 環境で実装しました。  
 
 ---
 
@@ -169,5 +168,6 @@ docker compose up -d	Dockerで起動（任意）
 
 GitHub	https://github.com/Umintyu-Okinawa
 
-実務でよく使用されるバッチ処理を学習して実践。
+現場で頻繫に使用されるバッチ処理を学習して実装してみました。
+
 
