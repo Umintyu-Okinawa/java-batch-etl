@@ -39,7 +39,7 @@ XAMPP + phpMyAdmin 環境で実装しました。
 | 言語 | Java 21 |
 | フレームワーク | Spring Boot 3.5, Spring Batch |
 | ORM | MyBatis |
-| データベース | MariaDB（XAMPP / Docker） |
+| データベース | MariaDB（XAMPP） |
 | テスト | JUnit5, SpringBatchTest |
 | ビルド | Maven（mvnw対応） |
 | 管理ツール | phpMyAdmin（XAMPP付属） |
@@ -169,5 +169,6 @@ docker compose up -d	Dockerで起動（任意）
 GitHub	https://github.com/Umintyu-Okinawa
 
 現場で頻繫に使用されるバッチ処理を学習して実装してみました。
+
 
 
