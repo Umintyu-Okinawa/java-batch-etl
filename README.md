@@ -164,11 +164,12 @@ docker compose up -d	Dockerで起動（任意）
 
 ## 作者情報
 
-名前	仲村莉穏
+名前：仲村莉穏
 
-GitHub	https://github.com/Umintyu-Okinawa
+GitHub：https://github.com/Umintyu-Okinawa
 
-現場で頻繫に使用されるバッチ処理を学習して実装してみました。
+学習分野：Spring Batch / MyBatis / Maven / JUnit5 / phpMyAdmin
+
 
 
 
