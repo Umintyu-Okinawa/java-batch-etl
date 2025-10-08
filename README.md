@@ -1,118 +1,169 @@
+<div id="top"></div>
+
 # Java Batch ETL（Spring Boot × MyBatis × MariaDB）
 
-Javaのフレームワークである Spring Boot を利用して構築された、  
-CSV ⇄ DB（MariaDB）間のデータ連携（ETL）処理を行うバッチアプリケーションです。  
-Spring Batch と MyBatis を組み合わせ、実務レベルのデータ処理とログ管理を実装しました。
+<p align="left">
+  <img src="https://img.shields.io/badge/Java-21-007396.svg?logo=java&style=for-the-badge">
+  <img src="https://img.shields.io/badge/SpringBoot-3.5-6DB33F.svg?logo=springboot&style=for-the-badge&logoColor=white">
+  <img src="https://img.shields.io/badge/MyBatis-3.5.15-D71F00.svg?logo=databricks&style=for-the-badge">
+  <img src="https://img.shields.io/badge/MariaDB-11.3.2-003545.svg?logo=mariadb&style=for-the-badge">
+  <img src="https://img.shields.io/badge/Maven-Build-1565C0.svg?logo=apache-maven&style=for-the-badge">
+</p>
 
 ---
 
-## プロジェクト概要
+## 目次
 
-| 項目 | 内容 |
+1. [プロジェクトについて](#プロジェクトについて)
+2. [使用技術](#使用技術)
+3. [ディレクトリ構成](#ディレクトリ構成)
+4. [開発環境構築](#開発環境構築)
+5. [コマンド一覧](#コマンド一覧)
+6. [トラブルシューティング](#トラブルシューティング)
+
+---
+
+## プロジェクトについて
+
+CSV ⇄ MariaDB 間のデータ連携（ETL）を自動化するバッチアプリケーションです。  
+Spring Batch と MyBatis を組み合わせ、実務レベルのデータ処理・エラーハンドリング・ログ記録を再現しています。  
+
+XAMPP + phpMyAdmin 環境でも再現可能で、Docker でも同様に動作します。  
+学習・転職用のポートフォリオとして作成しました。
+
+---
+
+## 使用技術
+
+| 分類 | 技術 |
 |:--|:--|
-| 目的 | Javaのバッチ処理（ETL）を通して、実務で求められる「データ連携・エラーハンドリング・スケジューリング」の理解と再現 |
-| 特徴 | MyBatis連携によるSQL管理、Spring Batchによる並列バッチ制御、Job/Step単位のログ記録 |
-| 対象DB | MariaDB（XAMPP または Docker） |
-| 構成 | Spring Boot 3.5 / Java 21 / MyBatis / Spring Batch / JUnit 5 |
-| 実行形式 | jar実行 または Docker Compose による自動起動 |
+| 言語 | Java 21 |
+| フレームワーク | Spring Boot 3.5, Spring Batch |
+| ORM | MyBatis |
+| データベース | MariaDB（XAMPP / Docker） |
+| テスト | JUnit5, SpringBatchTest |
+| ビルド | Maven（mvnw対応） |
+| 管理ツール | phpMyAdmin（XAMPP付属） |
 
 ---
 
-## ファイル構成と解説
+## ディレクトリ構成
 
-このプロジェクトの主要なファイルとディレクトリの役割は以下の通りです。
+<details>
+<summary>ディレクトリツリー</summary>
 
-### 1. プロジェクトルート
+```text
 
-- **pom.xml**  
-  Mavenプロジェクトの設定ファイル。依存関係やビルド設定を管理しています。  
-  主な依存関係：Spring Boot Batch, MyBatis, MariaDB Driver, JUnit5, Lombok  
-  Javaのバージョンは `21` に設定。
+java-batch-etl/
+├─ src/
+│ ├─ main/java/com/example/batch/
+│ │ ├─ config/ # Job / Step / Reader / Writer 定義
+│ │ ├─ domain/ # Entityクラス
+│ │ ├─ job/ # Job構成（csvToDb, dbToCsv）
+│ │ ├─ listener/ # JobExecutionListener
+│ │ ├─ repository/ # MyBatis Mapper
+│ │ └─ service/ # バッチスケジューラ
+│ ├─ resources/
+│ │ ├─ input/ # 入力CSV
+│ │ ├─ output/ # 出力CSV
+│ │ ├─ mapper/ # MyBatis XML
+│ │ └─ application.yml
+└─ pom.xml
 
-- **Dockerfile**  
-  本アプリケーションをDockerコンテナ化して実行するための設定。  
-  MariaDBとの連携を容易にし、環境を問わず再現性の高い実行を実現。
-
-- **docker-compose.yml**  
-  MariaDB と アプリケーションをまとめて起動する設定。  
-  `docker compose up -d` で簡単に検証環境を構築可能。
-
-- **mvnw / mvnw.cmd**  
-  Maven Wrapper。ローカルにMavenがなくてもビルド・実行が可能。
-
-- **src/**  
-  ソースコード、設定、リソースファイルを格納するメインディレクトリ。
-
----
-
-### 2. src/main/ - アプリケーション本体
-
-- **java/com/example/batch/**  
-  アプリケーションロジックを構成する主要パッケージ。
-
-  | ファイル | 役割 |
-  |:--|:--|
-  | JavaBatchEtlApplication.java | Spring Boot の起動クラス |
-  | config/BatchConfig.java | Job/Step/Reader/Writerの定義 |
-  | domain/Customer.java | CSV/DBで扱うデータ構造（エンティティ） |
-  | mapper/CustomerMapper.java | MyBatis の Mapper インターフェース |
-  | repository/BatchJobLogRepository.java | Job実行ログをDBに保存 |
-  | listener/JobCompletionListener.java | read/write/skip件数の集計 |
-  | service/BatchSchedulingService.java | 定期実行を行うスケジューラクラス |
-
-- **resources/**  
-  設定ファイルやSQL/CSVを格納。
-
-  | ファイル | 役割 |
-  |:--|:--|
-  | application.yml | 環境設定（DB接続・スケジューラ設定） |
-  | application-test.yml | テスト用設定 |
-  | mapper/CustomerMapper.xml | MyBatis の SQL 定義 |
-  | input/customers.csv | サンプル入力CSVデータ |
+```
+</details>
 
 ---
 
-### 3. src/test/ - テストコード
+## 開発環境構築
 
-- **java/com/example/batch/**  
-  テストクラスを配置。JUnitを使用して動作確認を行います。
+## 1. 前提
+- Java 21  
+- XAMPP（MariaDB + phpMyAdmin）または Docker  
+- Maven 3.9 以上（`mvnw` でも可）
 
-  | ファイル | 内容 |
-  |:--|:--|
-  | CsvToDbJobTest.java | CSV→DBジョブの件数アサート |
-  | DbToCsvJobTest.java | DB→CSVジョブの出力確認テスト |
+## 2. DB作成（phpMyAdmin）
+
+```sql
+CREATE DATABASE etl_demo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE etl_demo;
+
+CREATE TABLE customers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50),
+  country VARCHAR(50)
+);
+
+CREATE TABLE batch_job_log (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  job_name VARCHAR(100),
+  start_time DATETIME,
+  end_time DATETIME,
+  status VARCHAR(20),
+  read_count INT,
+  write_count INT,
+  skip_count INT
+);
+```
+
+## 3. application.yml 設定
+
+```
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/etl_demo
+    username: root
+    password:
+    driver-class-name: org.mariadb.jdbc.Driver
+  batch:
+    jdbc:
+      initialize-schema: always
+```
 
 ---
 
-## 主な機能
+## 4. 実行
 
-| 機能 | 内容 |
-|:--|:--|
-| CSV→DB取り込み | FlatFileItemReader + MyBatisWriterで一括登録 |
-| DB→CSV出力 | 条件抽出結果をCSVファイルとして出力 |
-| バリデーション | 必須列・型チェック（不正データはskip） |
-| Job実行ログ | read/write/skip件数をDBに保存 |
-| スケジュール実行 | cron設定で定期実行（ON/OFF切替可能） |
-| Docker再現性 | MariaDB + アプリをDocker Composeで起動 |
-| JUnitテスト | Step件数・出力確認の自動テスト |
-
----
-
-## 起動方法
-
-### 1. ローカル環境での実行
-
-```bash
-# 1) DB起動（XAMPP または Docker）
-# 2) ビルド
+ ビルド
 ./mvnw clean package -DskipTests
 
-# 3) CSV→DBジョブの実行
+ CSV → DB 登録ジョブ
 java -jar target/java-batch-etl-0.0.1-SNAPSHOT.jar \
-  --spring.profiles.active=test \
   --spring.batch.job.name=csvToDbJob
 
-# 4) DB→CSVジョブの実行
+ DB → CSV 出力ジョブ
 java -jar target/java-batch-etl-0.0.1-SNAPSHOT.jar \
-  --spring.profiles.active=test \
   --spring.batch.job.name=dbToCsvJob
+  
+## 5. 確認
+phpMyAdmin: etl_demo.customers にデータが入っている
+
+phpMyAdmin: etl_demo.batch_job_log に実行ログが記録されている
+
+src/main/resources/output/ に CSV ファイルが生成されている
+
+## コマンド一覧
+
+```
+./mvnw clean package -DskipTests	ビルド（テスト除外）
+java -jar target/java-batch-etl-0.0.1-SNAPSHOT.jar --spring.batch.job.name=csvToDbJob	CSV→DB登録
+java -jar target/java-batch-etl-0.0.1-SNAPSHOT.jar --spring.batch.job.name=dbToCsvJob	DB→CSV出力
+mvn test	JUnitテスト実行
+docker compose up -d	Dockerで起動（任意）
+```
+
+## トラブルシューティング
+CannotGetJdbcConnectionException	DBが起動していない。XAMPPのMySQLをStart。
+Access denied for user 'root'@'localhost'	application.yml のユーザー・パスワードを再確認。
+CSVが読み込まれない	src/main/resources/input/ にファイルを配置。列数と文字コード（UTF-8）を確認。
+出力CSVが空	DB内のレコードが存在しない可能性。SELECTで確認。
+
+<p align="right">(<a href="#top">トップへ戻る</a>)</p>
+
+## 作者情報
+
+名前	仲村莉穏
+
+GitHub	https://github.com/Umintyu-Okinawa
+
+実務でよく使用されるバッチ処理を学習して実践。
